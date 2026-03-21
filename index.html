@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUANCHO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0e14;
+            color: #39ff14;
+            font-family: 'Courier New', 'Lucida Console', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.08) 2px,
+                rgba(0, 0, 0, 0.08) 4px
+            );
+            z-index: 10;
+        }
+
+        .crt-flicker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 9;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 5;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .ascii-art {
+            font-size: clamp(6px, 1.2vw, 14px);
+            line-height: 1.1;
+            letter-spacing: 0.05em;
+            white-space: pre;
+            text-shadow: 0 0 8px rgba(57, 255, 20, 0.6),
+                         0 0 20px rgba(57, 255, 20, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .cursor-line {
+            font-size: clamp(12px, 1.4vw, 18px);
+            margin-top: 3rem;
+            color: #5a6672;
+            letter-spacing: 0.1em;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 0.6em;
+            height: 1.1em;
+            background-color: #39ff14;
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+
+        .prompt {
+            color: #39ff14;
+        }
+
+        .typed-text {
+            color: #8b949e;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 8px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.3); }
+            50% { text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 30px rgba(57, 255, 20, 0.4); }
+        }
+
+        .ascii-art {
+            animation: glow-pulse 4s ease-in-out infinite;
+        }
+
+        @media (max-width: 480px) {
+            .ascii-art {
+                font-size: 5px;
+                line-height: 1.05;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="scanline"></div>
+    <div class="crt-flicker"></div>
+    <div class="container">
+        <div class="ascii-art">
+      ██╗██╗   ██╗ █████╗ ███╗   ██╗ ██████╗██╗  ██╗ ██████╗ 
+      ██║██║   ██║██╔══██╗████╗  ██║██╔════╝██║  ██║██╔═══██╗
+      ██║██║   ██║███████║██╔██╗ ██║██║     ███████║██║   ██║
+ ██   ██║██║   ██║██╔══██║██║╚██╗██║██║     ██╔══██║██║   ██║
+ ╚█████╔╝╚██████╔╝██║  ██║██║ ╚████║╚██████╗██║  ██║╚██████╔╝
+  ╚════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝</div>
+        <div class="cursor-line">
+            <span class="prompt">visitor@juancho ~$</span> <span class="typed-text"></span><span class="cursor"></span>
+        </div>
+    </div>
+    <script>
+        // --- Configuration ---
+        const ENABLE_MATRIX_RAIN = false;
+
+        // --- Particle system ---
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const glyphs = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+        // Floating particles
+        const dots = Array.from({ length: 80 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.4 + 0.1,
+        }));
+
+        // Matrix rain columns
+        const fontSize = 14;
+        const columns = Math.floor(window.innerWidth / fontSize);
+        const drops = Array.from({ length: columns }, () => ({
+            y: Math.random() * -100,
+            speed: Math.random() * 0.4 + 0.15,
+            active: Math.random() < 0.12,
+            nextToggle: Math.random() * 400 + 100,
+            timer: 0,
+        }));
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Draw floating dots
+            for (const d of dots) {
+                d.x += d.vx;
+                d.y += d.vy;
+                if (d.x < 0) d.x = W;
+                if (d.x > W) d.x = 0;
+                if (d.y < 0) d.y = H;
+                if (d.y > H) d.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(57, 255, 20, ${d.alpha})`;
+                ctx.fill();
+            }
+
+            // Draw connections between nearby dots
+            for (let i = 0; i < dots.length; i++) {
+                for (let j = i + 1; j < dots.length; j++) {
+                    const dx = dots[i].x - dots[j].x;
+                    const dy = dots[i].y - dots[j].y;
+                    const dist = dx * dx + dy * dy;
+                    if (dist < 4000) {
+                        ctx.beginPath();
+                        ctx.moveTo(dots[i].x, dots[i].y);
+                        ctx.lineTo(dots[j].x, dots[j].y);
+                        ctx.strokeStyle = `rgba(57, 255, 20, ${0.25 * (1 - dist / 4000)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw matrix rain (sparse)
+            if (ENABLE_MATRIX_RAIN) {
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const drop = drops[i];
+                drop.timer++;
+                if (drop.timer > drop.nextToggle) {
+                    drop.active = !drop.active;
+                    drop.timer = 0;
+                    drop.nextToggle = Math.random() * 600 + 200;
+                    if (drop.active) drop.y = -1;
+                }
+                if (!drop.active) continue;
+
+                const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+                const x = i * fontSize;
+                const y = drop.y * fontSize;
+
+                // Head glow
+                ctx.fillStyle = 'rgba(57, 255, 20, 0.7)';
+                ctx.fillText(char, x, y);
+
+                // Fading trail
+                ctx.fillStyle = 'rgba(57, 255, 20, 0.04)';
+                for (let t = 1; t < 6; t++) {
+                    const tc = glyphs[Math.floor(Math.random() * glyphs.length)];
+                    ctx.fillText(tc, x, y - t * fontSize);
+                }
+
+                drop.y += drop.speed;
+                if (drop.y * fontSize > H + 100) {
+                    drop.y = -1;
+                }
+            }
+            } // end ENABLE_MATRIX_RAIN
+
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        // --- Typing effect ---
+        const phrases = [
+            "bienvenido",
+            "nada que ver aquí",
+            "que tengas un buen día",
+            "conexión establecida",
+            "señal recibida",
+            "ack",
+        ];
+
+        const typedText = document.querySelector('.typed-text');
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const current = phrases[phraseIndex];
+
+            if (!isDeleting) {
+                typedText.textContent = current.substring(0, charIndex + 1);
+                charIndex++;
+                if (charIndex === current.length) {
+                    isDeleting = true;
+                    setTimeout(type, 2500);
+                    return;
+                }
+                setTimeout(type, 80 + Math.random() * 60);
+            } else {
+                typedText.textContent = current.substring(0, charIndex - 1);
+                charIndex--;
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setTimeout(type, 600);
+                    return;
+                }
+                setTimeout(type, 40 + Math.random() * 30);
+            }
+        }
+
+        setTimeout(type, 1500);
+    </script>
+</body>
+</html>
