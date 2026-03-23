@@ -113,12 +113,13 @@
         }
 
         @keyframes glow-pulse {
-            0%, 100% { text-shadow: 0 0 8px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.3); }
-            50% { text-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 0 0 30px rgba(57, 255, 20, 0.4); }
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; }
         }
 
         .ascii-art {
             animation: glow-pulse 4s ease-in-out infinite;
+            will-change: opacity;
         }
 
         @media (max-width: 480px) {
@@ -148,6 +149,8 @@
     <script>
         // --- Configuration ---
         const ENABLE_MATRIX_RAIN = false;
+        const TARGET_FPS = 15;
+        const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
         // --- Particle system ---
         const canvas = document.getElementById('particles');
@@ -184,39 +187,74 @@
             timer: 0,
         }));
 
-        function drawParticles() {
+        // Pause animation when tab is not visible
+        let animationId = null;
+        let lastFrameTime = 0;
+
+        function drawParticles(timestamp) {
+            animationId = requestAnimationFrame(drawParticles);
+
+            // Throttle to TARGET_FPS
+            const elapsed = timestamp - lastFrameTime;
+            if (elapsed < FRAME_INTERVAL) return;
+            lastFrameTime = timestamp - (elapsed % FRAME_INTERVAL);
+
             ctx.clearRect(0, 0, W, H);
 
-            // Draw floating dots
+            // Delta-time factor: compensate for lower framerate so speed matches 60fps
+            const dtFactor = elapsed / (1000 / 60);
+
+            // Update positions and draw all dots in a single batch per alpha group
+            const alphaGroups = {};
             for (const d of dots) {
-                d.x += d.vx;
-                d.y += d.vy;
+                d.x += d.vx * dtFactor;
+                d.y += d.vy * dtFactor;
                 if (d.x < 0) d.x = W;
                 if (d.x > W) d.x = 0;
                 if (d.y < 0) d.y = H;
                 if (d.y > H) d.y = 0;
 
+                // Group by rounded alpha to batch draws
+                const key = d.alpha.toFixed(1);
+                if (!alphaGroups[key]) alphaGroups[key] = [];
+                alphaGroups[key].push(d);
+            }
+
+            // Batch draw dots by alpha group (fewer fillStyle changes)
+            for (const key in alphaGroups) {
+                ctx.fillStyle = `rgba(57, 255, 20, ${key})`;
                 ctx.beginPath();
-                ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(57, 255, 20, ${d.alpha})`;
+                for (const d of alphaGroups[key]) {
+                    ctx.moveTo(d.x + d.r, d.y);
+                    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                }
                 ctx.fill();
             }
 
-            // Draw connections between nearby dots
+            // Draw connections - batch lines by alpha bucket (fewer stroke calls)
+            ctx.lineWidth = 0.8;
+            const lineBuckets = {};
             for (let i = 0; i < dots.length; i++) {
                 for (let j = i + 1; j < dots.length; j++) {
                     const dx = dots[i].x - dots[j].x;
                     const dy = dots[i].y - dots[j].y;
                     const dist = dx * dx + dy * dy;
                     if (dist < 4000) {
-                        ctx.beginPath();
-                        ctx.moveTo(dots[i].x, dots[i].y);
-                        ctx.lineTo(dots[j].x, dots[j].y);
-                        ctx.strokeStyle = `rgba(57, 255, 20, ${0.25 * (1 - dist / 4000)})`;
-                        ctx.lineWidth = 0.8;
-                        ctx.stroke();
+                        const a = (0.25 * (1 - dist / 4000)).toFixed(2);
+                        if (!lineBuckets[a]) lineBuckets[a] = [];
+                        lineBuckets[a].push(i, j);
                     }
                 }
+            }
+            for (const a in lineBuckets) {
+                ctx.strokeStyle = `rgba(57, 255, 20, ${a})`;
+                ctx.beginPath();
+                const arr = lineBuckets[a];
+                for (let k = 0; k < arr.length; k += 2) {
+                    ctx.moveTo(dots[arr[k]].x, dots[arr[k]].y);
+                    ctx.lineTo(dots[arr[k+1]].x, dots[arr[k+1]].y);
+                }
+                ctx.stroke();
             }
 
             // Draw matrix rain (sparse)
@@ -237,11 +275,9 @@
                 const x = i * fontSize;
                 const y = drop.y * fontSize;
 
-                // Head glow
                 ctx.fillStyle = 'rgba(57, 255, 20, 0.7)';
                 ctx.fillText(char, x, y);
 
-                // Fading trail
                 ctx.fillStyle = 'rgba(57, 255, 20, 0.04)';
                 for (let t = 1; t < 6; t++) {
                     const tc = glyphs[Math.floor(Math.random() * glyphs.length)];
@@ -254,10 +290,17 @@
                 }
             }
             } // end ENABLE_MATRIX_RAIN
-
-            requestAnimationFrame(drawParticles);
         }
-        drawParticles();
+
+        // Start/stop animation based on page visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+            } else {
+                if (!animationId) { lastFrameTime = 0; animationId = requestAnimationFrame(drawParticles); }
+            }
+        });
+        animationId = requestAnimationFrame(drawParticles);
 
         // --- Typing effect ---
         const phrases = [
