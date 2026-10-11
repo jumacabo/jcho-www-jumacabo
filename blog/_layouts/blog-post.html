@@ -1,0 +1,81 @@
+---
+layout: blog-base
+---
+{%- include blog-minutes.html post=page -%}
+{%- include blog-cover-url.html cover=page.cover -%}
+{%- assign url = page.url | absolute_url -%}
+{%- assign url_e = url | url_encode -%}
+{%- assign title_e = page.title | url_encode | replace: "+", "%20" -%}
+{%- assign summary_raw = page.description | default: page.excerpt | strip_html | strip_newlines | truncate: 170 -%}
+{%- assign summary = summary_raw | escape -%}
+{%- assign mail_body = summary_raw | url_encode | replace: "+", "%20" | append: "%0A%0A" | append: url_e -%}
+{%- assign np = page.previous | default: page.next -%}
+<div class="wide">
+  <header class="tile ahead" id="ahead">
+    <h1>{{ page.title | escape }}</h1>
+    {%- if page.description %}
+    <p class="dek">{{ page.description | escape }}</p>
+    {%- endif %}
+    <div class="meta">
+      <span>{% include blog-icon.html name="calendar" %}<time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%A, %B %-d, %Y" }}</time></span>
+      <span>{% include blog-icon.html name="clock" %}{{ mins }} min read</span>
+    </div>
+  </header>
+  <div class="alay">
+    <div class="maincol">
+      <article class="tile content" id="art" data-url="{{ url }}" data-title="{{ page.title | escape }}" data-text="{{ summary }}" data-minutes="{{ mins }}">
+        {%- if cover_url != "" %}<img class="cover" src="{{ cover_url | escape }}" alt="">{% endif %}
+        <div class="body">
+{{ content }}
+        </div>
+      </article>
+      <section class="tile share" id="share" aria-labelledby="share-h">
+        <div class="shead">
+          <div><h2 id="share-h">Enjoyed this post?</h2><p>Share it with someone who'd like it too.</p></div>
+          <button class="sh native" type="button" data-native hidden>{% include blog-icon.html name="more" %}<span>More options</span></button>
+        </div>
+        <div class="shgrid">
+          <button class="sh copy" type="button" data-copy>{% include blog-icon.html name="link" %}<span>Copy link</span></button>
+          <a class="sh" data-net="mail" href="mailto:?subject={{ title_e }}&amp;body={{ mail_body }}" title="Share by email">{% include blog-icon.html name="mail" %}<span>Email</span></a>
+          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter">{% include blog-icon.html name="x" %}<span>Twitter</span></a>
+          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn">{% include blog-icon.html name="linkedin" %}<span>LinkedIn</span></a>
+          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook">{% include blog-icon.html name="facebook" %}<span>Facebook</span></a>
+          <a class="sh" data-net="reddit" href="https://www.reddit.com/submit?url={{ url_e }}&amp;title={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Reddit">{% include blog-icon.html name="reddit" %}<span>Reddit</span></a>
+          <a class="sh" data-net="whatsapp" href="https://wa.me/?text={{ title_e }}%20{{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp">{% include blog-icon.html name="whatsapp" %}<span>WhatsApp</span></a>
+          <a class="sh" data-net="telegram" href="https://t.me/share/url?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Telegram">{% include blog-icon.html name="telegram" %}<span>Telegram</span></a>
+        </div>
+      </section>
+      <section class="tile comments" id="comments" aria-labelledby="comments-h">
+        <div class="chead"><h2 id="comments-h">Comments</h2><span class="lab">via GitHub Discussions</span></div>
+        <p class="note">Sign in with GitHub to join the conversation. Comments are public and stored in <a href="https://github.com/{{ site.giscus.repo }}/discussions">GitHub Discussions</a>.</p>
+        <div class="giscus" data-repo="{{ site.giscus.repo }}" data-repo-id="{{ site.giscus.repo_id }}" data-category="{{ site.giscus.category }}" data-category-id="{{ site.giscus.category_id }}" data-term="{{ page.url }}"></div>
+        <noscript><p class="note">Comments need JavaScript.</p></noscript>
+      </section>
+    </div>
+    <aside class="side" aria-label="Post details">
+      {%- if page.tags.size > 0 %}
+      <div class="tile ptags"><span class="lab">Tags</span>{% include blog-chips.html tags=page.tags %}</div>
+      {%- endif %}
+      <div class="stick">
+        <div class="tile prog">{% include blog-ring.html %}<div><span class="lab">Reading progress</span><div class="left"><b class="lt">{{ mins }} min read</b><span class="ls">Scroll to start</span></div></div></div>
+        <div class="tile sshare"><span class="lab">Share</span><div class="row">
+          <button class="sh" type="button" data-copy title="Copy link" aria-label="Copy link">{% include blog-icon.html name="link" %}</button>
+          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter" aria-label="Share on Twitter">{% include blog-icon.html name="x" %}</a>
+          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn" aria-label="Share on LinkedIn">{% include blog-icon.html name="linkedin" %}</a>
+          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">{% include blog-icon.html name="facebook" %}</a>
+          <a class="sh" href="#share" data-native-or-scroll title="More options" aria-label="More options">{% include blog-icon.html name="more" %}</a>
+        </div></div>
+        <nav class="tile toc" id="toc" aria-label="In this post"><span class="lab">In this post</span><div class="lst"><a href="#comments" data-to="comments" class="cm">💬 Comments<span class="cc"></span></a></div></nav>
+        {%- if np %}
+        <a class="tile nextt" href="{{ np.url }}"><span class="lab">{% if page.previous %}Previous post{% else %}Next post{% endif %}</span><span class="arr" aria-hidden="true">→</span><div class="ttl">{{ np.title | escape }}</div></a>
+        {%- endif %}
+      </div>
+    </aside>
+  </div>
+  {%- if site.posts.size > 1 %}
+  <section class="more" aria-labelledby="more-h"><h2 id="more-h">All posts</h2><div class="bento">
+    {%- for p in site.posts -%}{%- assign is_cur = false -%}{%- if p.url == page.url -%}{%- assign is_cur = true -%}{%- endif -%}{%- include blog-tile.html post=p current=is_cur -%}{%- endfor -%}
+  </div></section>
+  {%- endif %}
+</div>
+<div class="mprog" id="mprog">{% include blog-ring.html mini=true %}<b class="mp" aria-hidden="true">0%</b><span class="ml" aria-hidden="true">{{ mins }} min left</span><button class="msh" type="button" data-share-any aria-label="Share this post">{% include blog-icon.html name="more" %}</button></div>

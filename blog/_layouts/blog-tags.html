@@ -1,0 +1,21 @@
+---
+layout: blog-base
+---
+{%- include blog-tagnames.html -%}
+<div class="wide">
+  <section class="tile tagshead">
+    <h1>Tags</h1>
+    <p class="filter" data-filter hidden>Showing posts tagged <b></b> · <a href="/blog/tags/">show all tags</a></p>
+    {%- if tag_names.size > 0 -%}
+      {% include blog-chips.html tags=tag_names %}
+    {%- else %}
+      <p class="none">No tags yet. The first post is on its way.</p>
+    {%- endif %}
+  </section>
+  {%- for t in tag_names %}
+  <section class="tagsec" id="{{ t | slugify }}" aria-labelledby="tag-{{ t | slugify }}">
+    <h2 class="sect" id="tag-{{ t | slugify }}">#{{ t | escape }} <span>{{ site.tags[t].size }}</span></h2>
+    <div class="bento">{%- for p in site.tags[t] -%}{%- include blog-tile.html post=p -%}{%- endfor -%}</div>
+  </section>
+  {%- endfor %}
+</div>

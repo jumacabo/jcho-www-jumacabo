@@ -1,0 +1,2 @@
+{%- comment -%}Short summary of a post: front matter `description`, or the first paragraph.{%- endcomment -%}
+{{- include.post.description | default: include.post.excerpt | strip_html | strip_newlines | truncate: 170 | escape -}}

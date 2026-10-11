@@ -1,0 +1,2 @@
+{%- comment -%}Reading-progress ring. include.mini: small version for the mobile pill.{%- endcomment -%}
+<div class="ring{% if include.mini %} mini{% endif %}" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg>{% unless include.mini %}<span class="pc">0%</span>{% endunless %}</div>

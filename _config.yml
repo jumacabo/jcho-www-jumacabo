@@ -1,0 +1,24 @@
+# Jekyll configuration for GitHub Pages.
+# The home page (index.html) is a static file and is published untouched; only /blog/ is generated.
+title: Juancho
+url: https://jumacabo.com
+
+# Keep every blog template inside /blog/ so the repository root stays clean.
+layouts_dir: blog/_layouts
+includes_dir: blog/_includes
+
+# Posts live in blog/_posts/YYYY-MM-DD-slug.md and are published at /blog/slug/.
+defaults:
+  - scope:
+      path: blog/_posts
+      type: posts
+    values:
+      layout: blog-post
+      permalink: /blog/:title/
+
+# Comments: giscus on GitHub Discussions. These IDs are public identifiers, not secrets.
+giscus:
+  repo: jumacabo/blog-comments
+  repo_id: R_kgDOVEq-fA
+  category: Announcements
+  category_id: DIC_kwDOVEq-fM4DHjVL

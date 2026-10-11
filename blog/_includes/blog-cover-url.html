@@ -1,0 +1,11 @@
+{%- comment -%}
+  Sets `cover_url` from include.cover. Accepts "/blog/media/x/cover.jpg", "media/x/cover.jpg" (relative to /blog/)
+  or a full https:// URL. Empty when there is no cover.
+{%- endcomment -%}
+{%- assign cover_url = include.cover | default: "" | strip -%}
+{%- if cover_url != "" -%}
+  {%- assign c0 = cover_url | slice: 0 -%}
+  {%- unless c0 == "/" or cover_url contains "://" -%}
+    {%- assign cover_url = "/blog/" | append: cover_url -%}
+  {%- endunless -%}
+{%- endif -%}

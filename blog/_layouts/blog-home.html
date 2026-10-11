@@ -1,0 +1,68 @@
+---
+layout: blog-base
+---
+{%- assign posts = site.posts -%}
+{%- assign total = posts.size -%}
+{%- include blog-tagnames.html -%}
+{%- assign total_min = 0 -%}
+{%- for p in posts -%}{%- include blog-minutes.html post=p -%}{%- assign total_min = total_min | plus: mins -%}{%- endfor -%}
+<h1 class="sr-only">Juancho · notes</h1>
+<div class="wide"><div class="bento">
+{%- if total > 0 -%}
+  {%- assign f = posts[0] -%}
+  {%- include blog-minutes.html post=f %}
+  <a class="tile feat s2 r2" href="{{ f.url }}">
+    {%- include blog-cover.html post=f %}
+    <span class="pill">✦ {% if total == 1 %}First post{% else %}Latest{% endif %}</span>
+    <h2>{{ f.title | escape }}</h2>
+    <p>{% include blog-desc.html post=f %}</p>
+    <div class="m">{{ f.date | date: "%B %-d, %Y" }} · {{ mins }} min read</div>
+  </a>
+{%- else %}
+  <div class="tile empty s2 r2">
+    <span class="epill">✦ Coming soon</span>
+    <div class="draft" aria-hidden="true">
+      <div class="dh"><i></i><i></i><i></i><span>first-post.md</span></div>
+      <div class="code"><span class="typed"># Hello, world</span><span class="caret"></span></div>
+      <div class="sk" style="width:94%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:86%"></div>
+    </div>
+    <div><h2>The first post is on its way</h2><p>I'm busy writing about Home Assistant, self-hosting and AI. Grab a coffee and check back soon.</p></div>
+  </div>
+{%- endif %}
+  <div class="tile about s2 r2">
+    <div class="who"><div class="ava avatar" role="img" aria-label="Juancho"></div><div><h2>Hi, I'm Juancho 👋</h2><div class="sub">Software developer · Spain</div></div></div>
+    <p class="bio">I've been writing software for more than 25 years and I still get a kick out of it. These days most of my tinkering happens at home: making the house smarter with <b>Home Assistant</b> and self-hosting the services I use every day. This is where I share what I learn along the way, including the things that didn't work the first time.</p>
+    <div class="topics">
+      <div class="topic core"><i aria-hidden="true">🏠</i><div><b>Home Assistant</b><span>The heart of this blog</span></div></div>
+      <div class="topic"><i aria-hidden="true">🖥️</i><div><b>Self-hosting</b><span>My own services, at home</span></div></div>
+      <div class="topic"><i aria-hidden="true">🤖</i><div><b>AI</b><span>Exploring what it can do</span></div></div>
+      <div class="topic"><i aria-hidden="true">🤓</i><div><b>Tech &amp; gadgets</b><span>Geek stuff I can't resist</span></div></div>
+    </div>
+    <div class="foot">
+    {%- if total > 0 -%}
+      <span><b>{{ total }}</b> {% if total == 1 %}post{% else %}posts{% endif %}</span><span><b>{{ total_min }}</b> min of reading</span><span>latest <b><time class="ago" datetime="{{ posts[0].date | date_to_xmlschema }}">{{ posts[0].date | date: "%b %-d, %Y" }}</time></b></span>
+    {%- else -%}
+      <span>✍️ First post coming soon</span>
+    {%- endif -%}
+    </div>
+  </div>
+{%- if total >= 2 -%}
+  {%- assign w = posts[1] -%}
+  {%- include blog-minutes.html post=w %}
+  <a class="tile wpost s2" href="{{ w.url }}">
+    {%- include blog-cover.html post=w lazy=true -%}
+    <div class="txt"><div><span class="lab">{{ w.tags | join: " · " | escape }}</span><div class="ttl">{{ w.title | escape }}</div><p>{% include blog-desc.html post=w %}</p></div><div class="dt">{{ w.date | date: "%b %-d, %Y" }} · {{ mins }} min</div></div>
+  </a>
+  <div class="tile tags"><span class="lab">Tags</span>{% include blog-chips.html tags=tag_names %}</div>
+  {%- for p in posts offset: 2 -%}{%- include blog-tile.html post=p -%}{%- endfor -%}
+  {%- comment -%}Filler: completes the last row so the grid never has holes (4 columns on desktop, 2 on tablets).{%- endcomment -%}
+  {%- assign cells = total | plus: 1 -%}
+  {%- assign c4 = cells | modulo: 4 -%}{%- assign f4 = 4 | minus: c4 | modulo: 4 -%}
+  {%- assign c2 = cells | modulo: 2 -%}{%- assign f2 = 2 | minus: c2 | modulo: 2 -%}
+  {%- if f4 > 0 or f2 > 0 %}
+  <div class="tile fill{% if f4 == 0 %} no4{% endif %}{% if f2 == 0 %} no2{% endif %}" style="--f4:{{ f4 | at_least: 1 }};--f2:{{ f2 | at_least: 1 }}">
+    <span class="fi" aria-hidden="true">✍️</span><div><b>More posts are on the way</b><span>Home Assistant, self-hosting, AI and the occasional rabbit hole.</span></div>
+  </div>
+  {%- endif -%}
+{%- endif %}
+</div></div>

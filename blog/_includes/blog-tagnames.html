@@ -1,0 +1,5 @@
+{%- comment -%}
+  Sets `tag_names`: every tag used by any post, sorted case-insensitively.
+{%- endcomment -%}
+{%- capture tag_csv -%}{%- for t in site.tags -%}{{ t[0] }}{%- unless forloop.last -%}|{%- endunless -%}{%- endfor -%}{%- endcapture -%}
+{%- assign tag_names = tag_csv | split: "|" | sort_natural -%}

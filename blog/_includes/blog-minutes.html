@@ -1,0 +1,5 @@
+{%- comment -%}
+  Sets `mins` (reading time, 200 words per minute, at least 1) for include.post.
+  Used as a function: assigns made inside an include are visible to the caller.
+{%- endcomment -%}
+{%- assign mins = include.post.content | strip_html | number_of_words | divided_by: 200.0 | ceil | at_least: 1 -%}

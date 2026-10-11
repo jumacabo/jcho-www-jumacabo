@@ -1,0 +1,6 @@
+{%- assign tp = include.post -%}
+{%- include blog-minutes.html post=tp -%}
+<a class="tile ppost{% if include.current %} cur{% endif %}" href="{{ tp.url }}"{% if include.current %} aria-current="page"{% endif %}>
+  {%- include blog-cover.html post=tp lazy=true -%}
+  <div class="txt"><div class="ttl">{{ tp.title | escape }}</div><div class="dt">{{ tp.date | date: "%b %-d, %Y" }} · {{ mins }} min</div></div>
+</a>

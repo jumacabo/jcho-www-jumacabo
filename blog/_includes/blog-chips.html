@@ -1,0 +1,6 @@
+{%- comment -%}Tag chips linking to /blog/tags/#tag. include.tags: list of tag names.{%- endcomment -%}
+<div class="chips">
+{%- for t in include.tags -%}
+  <a class="chip" href="/blog/tags/#{{ t | slugify }}" data-tag="{{ t | slugify }}">{{ t | escape }}<b>{{ site.tags[t].size }}</b></a>
+{%- endfor -%}
+</div>
