@@ -1,0 +1,6 @@
+{%- comment -%}
+  GoatCounter click event for a share button. Name = network (totals per button);
+  referrer = where it was clicked and on which post, e.g. "sidebar · /blog/my-post/".
+  Usage: <a ...{% include blog-gc.html n="twitter" t="Twitter" w="bottom" %}>
+  The output starts with a space so it can follow any attribute, including valueless ones like `hidden`.
+{%- endcomment %} data-goatcounter-click="share-{{ include.n }}" data-goatcounter-title="Share: {{ include.t }}" data-goatcounter-referrer="{{ include.w }} · {{ page.url }}"

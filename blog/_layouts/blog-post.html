@@ -32,17 +32,17 @@ layout: blog-base
       <section class="tile share" id="share" aria-labelledby="share-h">
         <div class="shead">
           <div><h2 id="share-h">Enjoyed this post?</h2><p>Share it with someone who'd like it too.</p></div>
-          <button class="sh native" type="button" data-native hidden>{% include blog-icon.html name="more" %}<span>More options</span></button>
+          <button class="sh native" type="button" data-native hidden{% include blog-gc.html n="native" t="More options" w="bottom" %}>{% include blog-icon.html name="more" %}<span>More options</span></button>
         </div>
         <div class="shgrid">
-          <button class="sh copy" type="button" data-copy>{% include blog-icon.html name="link" %}<span>Copy link</span></button>
-          <a class="sh" data-net="mail" href="mailto:?subject={{ title_e }}&amp;body={{ mail_body }}" title="Share by email">{% include blog-icon.html name="mail" %}<span>Email</span></a>
-          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter">{% include blog-icon.html name="x" %}<span>Twitter</span></a>
-          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn">{% include blog-icon.html name="linkedin" %}<span>LinkedIn</span></a>
-          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook">{% include blog-icon.html name="facebook" %}<span>Facebook</span></a>
-          <a class="sh" data-net="reddit" href="https://www.reddit.com/submit?url={{ url_e }}&amp;title={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Reddit">{% include blog-icon.html name="reddit" %}<span>Reddit</span></a>
-          <a class="sh" data-net="whatsapp" href="https://wa.me/?text={{ title_e }}%20{{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp">{% include blog-icon.html name="whatsapp" %}<span>WhatsApp</span></a>
-          <a class="sh" data-net="telegram" href="https://t.me/share/url?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Telegram">{% include blog-icon.html name="telegram" %}<span>Telegram</span></a>
+          <button class="sh copy" type="button" data-copy{% include blog-gc.html n="copy" t="Copy link" w="bottom" %}>{% include blog-icon.html name="link" %}<span>Copy link</span></button>
+          <a class="sh" data-net="mail" href="mailto:?subject={{ title_e }}&amp;body={{ mail_body }}" title="Share by email"{% include blog-gc.html n="email" t="Email" w="bottom" %}>{% include blog-icon.html name="mail" %}<span>Email</span></a>
+          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter"{% include blog-gc.html n="twitter" t="Twitter" w="bottom" %}>{% include blog-icon.html name="x" %}<span>Twitter</span></a>
+          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn"{% include blog-gc.html n="linkedin" t="LinkedIn" w="bottom" %}>{% include blog-icon.html name="linkedin" %}<span>LinkedIn</span></a>
+          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook"{% include blog-gc.html n="facebook" t="Facebook" w="bottom" %}>{% include blog-icon.html name="facebook" %}<span>Facebook</span></a>
+          <a class="sh" data-net="reddit" href="https://www.reddit.com/submit?url={{ url_e }}&amp;title={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Reddit"{% include blog-gc.html n="reddit" t="Reddit" w="bottom" %}>{% include blog-icon.html name="reddit" %}<span>Reddit</span></a>
+          <a class="sh" data-net="whatsapp" href="https://wa.me/?text={{ title_e }}%20{{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp"{% include blog-gc.html n="whatsapp" t="WhatsApp" w="bottom" %}>{% include blog-icon.html name="whatsapp" %}<span>WhatsApp</span></a>
+          <a class="sh" data-net="telegram" href="https://t.me/share/url?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Telegram"{% include blog-gc.html n="telegram" t="Telegram" w="bottom" %}>{% include blog-icon.html name="telegram" %}<span>Telegram</span></a>
         </div>
       </section>
       <section class="tile comments" id="comments" aria-labelledby="comments-h">
@@ -59,11 +59,11 @@ layout: blog-base
       <div class="stick">
         <div class="tile prog">{% include blog-ring.html %}<div><span class="lab">Reading progress</span><div class="left"><b class="lt">{{ mins }} min read</b><span class="ls">Scroll to start</span></div></div></div>
         <div class="tile sshare"><span class="lab">Share</span><div class="row">
-          <button class="sh" type="button" data-copy title="Copy link" aria-label="Copy link">{% include blog-icon.html name="link" %}</button>
-          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter" aria-label="Share on Twitter">{% include blog-icon.html name="x" %}</a>
-          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn" aria-label="Share on LinkedIn">{% include blog-icon.html name="linkedin" %}</a>
-          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">{% include blog-icon.html name="facebook" %}</a>
-          <a class="sh" href="#share" data-native-or-scroll title="More options" aria-label="More options">{% include blog-icon.html name="more" %}</a>
+          <button class="sh" type="button" data-copy title="Copy link" aria-label="Copy link"{% include blog-gc.html n="copy" t="Copy link" w="sidebar" %}>{% include blog-icon.html name="link" %}</button>
+          <a class="sh" data-net="x" href="https://x.com/intent/tweet?url={{ url_e }}&amp;text={{ title_e }}" target="_blank" rel="noopener noreferrer" title="Share on Twitter" aria-label="Share on Twitter"{% include blog-gc.html n="twitter" t="Twitter" w="sidebar" %}>{% include blog-icon.html name="x" %}</a>
+          <a class="sh" data-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn" aria-label="Share on LinkedIn"{% include blog-gc.html n="linkedin" t="LinkedIn" w="sidebar" %}>{% include blog-icon.html name="linkedin" %}</a>
+          <a class="sh" data-net="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ url_e }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook"{% include blog-gc.html n="facebook" t="Facebook" w="sidebar" %}>{% include blog-icon.html name="facebook" %}</a>
+          <a class="sh" href="#share" data-native-or-scroll title="More options" aria-label="More options"{% include blog-gc.html n="native" t="More options" w="sidebar" %}>{% include blog-icon.html name="more" %}</a>
         </div></div>
         <nav class="tile toc" id="toc" aria-label="In this post"><span class="lab">In this post</span><div class="lst"><a href="#comments" data-to="comments" class="cm">💬 Comments<span class="cc"></span></a></div></nav>
         {%- if np %}
@@ -78,4 +78,4 @@ layout: blog-base
   </div></section>
   {%- endif %}
 </div>
-<div class="mprog" id="mprog">{% include blog-ring.html mini=true %}<b class="mp" aria-hidden="true">0%</b><span class="ml" aria-hidden="true">{{ mins }} min left</span><button class="msh" type="button" data-share-any aria-label="Share this post">{% include blog-icon.html name="more" %}</button></div>
+<div class="mprog" id="mprog">{% include blog-ring.html mini=true %}<b class="mp" aria-hidden="true">0%</b><span class="ml" aria-hidden="true">{{ mins }} min left</span><button class="msh" type="button" data-share-any aria-label="Share this post"{% include blog-gc.html n="native" t="More options" w="mobile" %}>{% include blog-icon.html name="more" %}</button></div>
