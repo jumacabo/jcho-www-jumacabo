@@ -98,7 +98,7 @@ A few examples:
 | Rain, by intensity | Rain gauge and rain sensor | `sensor`, `binary_sensor` | [Ecowitt Wittboy](https://www.ecowitt.com/shop/goodsDetail/245) |
 | Hammock, awning fringes and anemometer | Anemometer: wind and gusts | `sensor` (km/h) | [Ecowitt Wittboy](https://www.ecowitt.com/shop/goodsDetail/245) |
 | Sun, light and shadows | The time and the house's orientation | `sun` | — |
-| People in their room | Bluetooth signal strength of our phones | `person` + area | [ESP32](https://www.espressif.com/en/products/socs/esp32) + [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) |
+| People in their room | Bluetooth signal strength of our phones | `person` + area | 21 Bluetooth proxies ([Atom Echo](https://docs.m5stack.com/en/atom/atomecho) and [Shelly](https://www.shelly.com/)) + [my own positioning engine](/blog/bluetooth-trilateration/) |
 | Awnings from 0 to 100% | Z-Wave motors | `cover` | Z-Wave, with [Z-Wave JS UI](https://github.com/zwave-js/zwave-js-ui) |
 | Garage door | Contact sensor and relay | `binary_sensor`, `switch` | [Aqara Door and Window Sensor](https://www.aqara.com/en/product/door-and-window-sensor/) + [Shelly Plus 1](https://kb.shelly.cloud/knowledge-base/shelly-plus-1) |
 | Front gate and its opener | Contact sensor and relay | `binary_sensor`, `switch` | [Aqara Door and Window Sensor](https://www.aqara.com/en/product/door-and-window-sensor/) + [Shelly 1](https://kb.shelly.cloud/knowledge-base/shelly-1) |
@@ -307,7 +307,7 @@ It's not public for now. The part that generates the house in Blender is very sp
 
 ### How do you know which room everyone is in?
 
-With a few ESP32 boards spread around the house that measure the Bluetooth signal strength of our phones, plus the [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) integration, which uses that to work out which area each person is in.
+When I published this post, I was using the [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) integration for this. A few days later I replaced it with my own engine: 21 Bluetooth proxies spread around the house (Shelly devices and Atom Echo boards) hear our phones, and the engine uses the house's 3D model to work out where each of us is. I tell the whole story in [this other post](/blog/bluetooth-trilateration/).
 
 ### Does it replace Home Assistant?
 

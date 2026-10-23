@@ -100,7 +100,7 @@ Algunos ejemplos:
 | Lluvia, según su intensidad | Pluviómetro y sensor de lluvia | `sensor`, `binary_sensor` | [Ecowitt Wittboy](https://www.ecowitt.com/shop/goodsDetail/245) |
 | Hamaca, flecos de los toldos y anemómetro | Anemómetro: viento y ráfagas | `sensor` (km/h) | [Ecowitt Wittboy](https://www.ecowitt.com/shop/goodsDetail/245) |
 | Sol, luz y sombras | La hora y la orientación de la casa | `sun` | — |
-| Personas en su habitación | Intensidad del Bluetooth de los móviles | `person` + área | [ESP32](https://www.espressif.com/en/products/socs/esp32) + [Bermuda BLE Trilateration](https://github.com/agittins/bermuda) |
+| Personas en su habitación | Intensidad del Bluetooth de los móviles | `person` + área | 21 proxies Bluetooth ([Atom Echo](https://docs.m5stack.com/en/atom/atomecho) y [Shelly](https://www.shelly.com/)) + [mi propio motor de posicionamiento](/blog/bluetooth-trilateration/) |
 | Toldos del 0 al 100 % | Motores Z-Wave | `cover` | Z-Wave, con [Z-Wave JS UI](https://github.com/zwave-js/zwave-js-ui) |
 | Portón del garaje | Sensor de contacto y relé | `binary_sensor`, `switch` | [Aqara Door and Window Sensor](https://www.aqara.com/en/product/door-and-window-sensor/) + [Shelly Plus 1](https://kb.shelly.cloud/knowledge-base/shelly-plus-1) |
 | Cancela y abrepuertas | Sensor de contacto y relé | `binary_sensor`, `switch` | [Aqara Door and Window Sensor](https://www.aqara.com/en/product/door-and-window-sensor/) + [Shelly 1](https://kb.shelly.cloud/knowledge-base/shelly-1) |
@@ -309,7 +309,7 @@ De momento no es público. La parte que genera la casa en Blender es muy especí
 
 ### ¿Cómo sabes en qué habitación está cada uno?
 
-Con unos ESP32 repartidos por la casa que miden la intensidad de la señal Bluetooth de los móviles, y la integración [Bermuda BLE Trilateration](https://github.com/agittins/bermuda), que con eso calcula en qué área está cada uno.
+Cuando publiqué este artículo, lo hacía con la integración [Bermuda BLE Trilateration](https://github.com/agittins/bermuda). Unos días después la sustituí por mi propio motor: 21 proxies Bluetooth repartidos por la casa (Shelly y Atom Echo) oyen los móviles, y el motor usa el modelo 3D de la casa para calcular dónde está cada uno. Lo cuento todo en [este otro artículo](/blog/bluetooth-trilateration/).
 
 ### ¿Sustituye a Home Assistant?
 
