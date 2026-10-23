@@ -3,38 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="color-scheme" content="light dark">
-{%- assign site_name = "Juancho · notes" -%}
+{%- assign site_name = site.title -%}
 {%- assign is_post = false -%}
 {%- if page.layout == "blog-post" -%}{%- assign is_post = true -%}{%- endif -%}
 {%- if is_post -%}
   {%- assign doc_title = page.title | append: " · " | append: site_name -%}
+  {%- assign share_title = page.title -%}
   {%- assign doc_desc = page.description | default: page.excerpt | strip_html | strip_newlines | truncate: 200 -%}
 {%- elsif page.heading -%}
   {%- assign doc_title = page.heading | append: " · " | append: site_name -%}
 {%- else -%}
   {%- assign doc_title = site_name -%}
 {%- endif -%}
-{%- assign doc_desc = doc_desc | default: "Home Assistant, self-hosting, AI and tech notes by Juancho." %}
+{%- comment -%}Optional `seo_title`: the whole <title> that search engines show. The H1 and link previews keep `title`.{%- endcomment -%}
+{%- if page.seo_title -%}{%- assign doc_title = page.seo_title -%}{%- endif -%}
+{%- assign share_title = share_title | default: doc_title -%}
+{%- assign doc_desc = doc_desc | default: page.description | default: site.description -%}
+{%- assign page_url = page.url | absolute_url -%}
+{%- assign blog_url = "/blog/" | absolute_url -%}
+{%- include blog-cover-url.html cover=page.cover -%}
+{%- if cover_url != "" -%}
+  {%- assign image_url = cover_url | absolute_url -%}
+{%- else -%}
+  {%- assign image_url = "https://avatars.githubusercontent.com/u/13786158?v=4&s=460" -%}
+{%- endif %}
 <title>{{ doc_title | escape }}</title>
 <meta name="description" content="{{ doc_desc | escape }}">
-<meta property="og:site_name" content="{{ site_name }}">
-<meta property="og:title" content="{% if is_post %}{{ page.title | escape }}{% else %}{{ doc_title | escape }}{% endif %}">
+<meta name="author" content="{{ site.author.name | escape }}">
+<link rel="canonical" href="{{ page_url }}">
+<link rel="alternate" type="application/atom+xml" title="{{ site_name | escape }}" href="/blog/feed.xml">
+<meta property="og:site_name" content="{{ site_name | escape }}">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="{{ share_title | escape }}">
 <meta property="og:description" content="{{ doc_desc | escape }}">
-<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:url" content="{{ page_url }}">
 <meta property="og:type" content="{% if is_post %}article{% else %}website{% endif %}">
-{%- include blog-cover-url.html cover=page.cover -%}
-{%- if cover_url != "" %}
-<meta property="og:image" content="{{ cover_url | absolute_url }}">
-<meta name="twitter:card" content="summary_large_image">
-{%- else %}
-<meta property="og:image" content="https://avatars.githubusercontent.com/u/13786158?v=4&amp;s=460">
-<meta name="twitter:card" content="summary">
-{%- endif %}
+<meta property="og:image" content="{{ image_url | escape }}">
+<meta name="twitter:card" content="{% if cover_url != "" %}summary_large_image{% else %}summary{% endif %}">
 {%- if is_post %}
 <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+<meta property="article:modified_time" content="{{ page.last_modified_at | default: page.date | date_to_xmlschema }}">
+{%- for t in page.tags %}
+<meta property="article:tag" content="{{ t | escape }}">
+{%- endfor %}
 {%- endif %}
+{% include blog-jsonld.html %}
 {%- assign v = site.time | date: "%s" %}
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">

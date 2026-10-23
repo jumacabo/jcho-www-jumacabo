@@ -1,7 +1,20 @@
 # Jekyll configuration for GitHub Pages.
 # The home page (index.html) is a static file and is published untouched; only /blog/ is generated.
-title: Juancho
+title: Juancho · notes
+description: "Home Assistant, self-hosting and AI projects from my own home, by a software developer with 25+ years of experience: what worked and what didn't."
 url: https://jumacabo.com
+author:
+  name: Juancho
+  uri: https://jumacabo.com/blog/
+
+# Search engines: sitemap.xml at the root (robots.txt points to it) and an Atom feed for the blog.
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+feed:
+  path: /blog/feed.xml
+  # Posts rely on carousels, videos and their own scripts, which feed readers don't render: link to them instead.
+  excerpt_only: true
 
 # Keep every blog template inside /blog/ so the repository root stays clean.
 layouts_dir: blog/_layouts

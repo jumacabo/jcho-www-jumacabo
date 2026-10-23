@@ -24,7 +24,7 @@ layout: blog-base
   <div class="alay">
     <div class="maincol">
       <article class="tile content" id="art" data-url="{{ url }}" data-title="{{ page.title | escape }}" data-text="{{ summary }}" data-minutes="{{ mins }}">
-        {%- if cover_url != "" %}<img class="cover" src="{{ cover_url | escape }}" alt="">{% endif %}
+        {%- if cover_url != "" %}<img class="cover" src="{{ cover_url | escape }}" alt="" fetchpriority="high">{% endif %}
         <div class="body">
 {{ content }}
         </div>

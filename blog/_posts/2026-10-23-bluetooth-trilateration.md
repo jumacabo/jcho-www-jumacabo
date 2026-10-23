@@ -1,5 +1,6 @@
 ---
 title: "My house knows which corner I'm in"
+seo_title: "Bluetooth trilateration in Home Assistant, without Bermuda"
 description: "21 Bluetooth proxies, the 3D model of my house and an engine of my own: Home Assistant knows where each of us is to within about 1.5 meters, without Bermuda."
 tags: [home-assistant, bluetooth, presence, esphome, 3d, ai]
 cover: /blog/media/bluetooth-trilateration/cover.jpg

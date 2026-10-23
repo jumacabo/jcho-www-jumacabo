@@ -1,5 +1,6 @@
 ---
 title: "My house has a live 3D digital twin"
+seo_title: "Home Assistant 3D dashboard: a live digital twin of my house"
 description: "I started from the floor plans and a few photos. I ended up with a 3D replica of my house that moves with what happens in it, and from which I run the whole place."
 tags: [home-assistant, threejs, blender, 3d, dashboard, ai]
 cover: /blog/media/home-assistant-3d-house/cover.jpg
