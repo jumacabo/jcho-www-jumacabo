@@ -51,9 +51,14 @@ layout: blog-base
   {%- include blog-minutes.html post=w %}
   <a class="tile wpost s2" href="{{ w.url }}">
     {%- include blog-cover.html post=w lazy=true -%}
-    <div class="txt"><div><span class="lab">{{ w.tags | join: " · " | escape }}</span><div class="ttl">{{ w.title | escape }}</div><p>{% include blog-desc.html post=w %}</p></div><div class="dt">{{ w.date | date: "%b %-d, %Y" }} · {{ mins }} min</div></div>
+    <div class="txt"><div><span class="lab tg">{%- for t in w.tags -%}<span>{{ t | escape }}</span>{%- endfor -%}</span><div class="ttl">{{ w.title | escape }}</div><p>{% include blog-desc.html post=w %}</p></div><div class="dt">{{ w.date | date: "%b %-d, %Y" }} · {{ mins }} min</div></div>
   </a>
-  <div class="tile tags"><span class="lab">Tags</span>{% include blog-chips.html tags=tag_names %}</div>
+  {%- comment -%}Tags tile: most used first (ties alphabetical); blog.js hides the chips that don't fit whole and adds "+N".{%- endcomment -%}
+  {%- capture ranked -%}{%- for t in tag_names -%}{{ 9999 | minus: site.tags[t].size | prepend: "000" | slice: -4, 4 }}|{{ t }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endcapture -%}
+  {%- assign ranked = ranked | split: "," | sort -%}
+  {%- assign home_tags = "" | split: "" -%}
+  {%- for r in ranked -%}{%- assign nm = r | split: "|" | last -%}{%- assign home_tags = home_tags | push: nm -%}{%- endfor %}
+  <div class="tile tags"><span class="lab">Tags</span>{% include blog-chips.html tags=home_tags %}</div>
   {%- for p in posts offset: 2 -%}{%- include blog-tile.html post=p -%}{%- endfor -%}
   {%- comment -%}Filler: completes the last row so the grid never has holes (4 columns on desktop, 2 on tablets).{%- endcomment -%}
   {%- assign cells = total | plus: 1 -%}

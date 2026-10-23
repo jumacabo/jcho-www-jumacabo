@@ -45,6 +45,57 @@
     applyFilter();
   }
 
+  /* ---------- Home: the tags tile shows only whole chips, packed into its rows, and a "+N" link to the rest ---------- */
+  const tagTile = $('.bento .tile.tags');
+  if (tagTile) {
+    const box = $('.chips', tagTile);
+    const chips = $$('.chip', box);
+    const rest = document.createElement('a');
+    rest.className = 'chip rest';
+    rest.href = '/blog/tags/';
+    const width = el => el.getBoundingClientRect().width;
+    const fitTags = () => {
+      // Back to the natural flow: every chip, most used first.
+      rest.remove();
+      chips.forEach(c => { c.hidden = false; box.appendChild(c); });
+      $$('.crow', box).forEach(r => r.remove());
+      box.classList.remove('packed');
+      const limit = tagTile.getBoundingClientRect().bottom - parseFloat(getComputedStyle(tagTile).paddingBottom) + 0.5;
+      if (chips.every(c => c.getBoundingClientRect().bottom <= limit)) return;
+      // They don't all fit: each chip, in order, goes into the first row with room for it (filling the gaps);
+      // the ones that fit nowhere are hidden and "+N" closes the last row.
+      const style = getComputedStyle(box);
+      const gap = parseFloat(style.columnGap) || 0, rowGap = parseFloat(style.rowGap) || 0;
+      const room = box.clientWidth + 0.5;
+      const rows = Array.from({ length: Math.max(1, Math.floor((limit - box.getBoundingClientRect().top + rowGap) / (chips[0].offsetHeight + rowGap))) }, () => []);
+      const fitsIn = (row, w) => row.reduce((s, c) => s + width(c) + gap, 0) + w <= room;
+      const hidden = [];
+      chips.forEach(c => (rows.find(row => fitsIn(row, width(c))) || hidden).push(c));
+      if (hidden.length) {
+        const last = rows[rows.length - 1];
+        box.appendChild(rest);
+        for (;;) {
+          rest.textContent = `+${hidden.length}`;
+          if (fitsIn(last, width(rest)) || !last.length) break;
+          hidden.push(last.pop());
+        }
+        last.push(rest);
+        rest.title = `${hidden.length} more tag${hidden.length === 1 ? '' : 's'}`;
+        rest.setAttribute('aria-label', rest.title);
+      }
+      hidden.forEach(c => { c.hidden = true; });
+      box.classList.add('packed');
+      rows.filter(r => r.length).forEach(r => { const row = document.createElement('div'); row.className = 'crow'; row.append(...r); box.appendChild(row); });
+    };
+    let fitQueued = false;
+    const queueFit = () => { if (!fitQueued) { fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fitTags(); }); } };
+    fitTags();
+    // Web fonts change the chips' width: fit again once they (and the page) have loaded.
+    if (document.fonts) { document.fonts.ready.then(queueFit); document.fonts.addEventListener('loadingdone', queueFit); }
+    addEventListener('load', queueFit);
+    addEventListener('resize', queueFit, { passive: true });
+  }
+
   /* ---------- Post page ---------- */
   const art = $('#art');
   if (!art) return;
